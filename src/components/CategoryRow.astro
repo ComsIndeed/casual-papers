@@ -37,9 +37,10 @@ const { label, list } = Astro.props;
     width: 90vw;
     overflow-x: auto;
     gap: 1rem;
+    scroll-snap-type: x mandatory; /* Enable horizontal snapping */
   }
 
-  .card-container {
-    flex: 0 0 auto;
+  .ContentCard {
+    scroll-snap-align: start; /* Ensure each card aligns at the start */
   }
 </style>
