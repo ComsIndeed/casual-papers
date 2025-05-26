@@ -1,0 +1,48 @@
+---
+import { Content } from "../classes/Content";
+
+interface Props {
+  content: Content;
+}
+
+const { content }: { content: Content } = Astro.props;
+---
+
+<div class="ContentCard">
+  <img src={content.imageUrl} alt={content.head} />
+  <h2>{content.head}</h2>
+  <p>{content.body}</p>
+</div>
+
+<style lang="scss">
+  .ContentCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    height: 16em;
+    min-width: 16em;
+    overflow-y: hidden;
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-size: 1.125rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 1rem;
+      color: #666;
+    }
+  }
+</style>

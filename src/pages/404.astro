@@ -1,0 +1,59 @@
+---
+
+---
+
+<html>
+  <head>
+    <title>Page not found</title>
+  </head>
+  <div class="container error-page">
+    <h1>404 - Page Not Found</h1>
+    <p>
+      Oops! It looks like you've stumbled upon a research paper that hasn't been
+      published yet (or ever).
+    </p>
+    <a href="/home" class="button">Go to Homepage</a>
+    <img
+      src="https://images.unsplash.com/photo-1579373903781-fd40536d7fd1?ixlib=rb-4.0.3&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=800&h=600&fit=crop"
+      alt="Lost in space"
+      class="error-image"
+    />
+  </div>
+
+  <style lang="scss">
+    .error-page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 200px); /* Adjust for header/footer */
+      text-align: center;
+      padding: 2rem;
+
+      h1 {
+        font-size: 3em;
+        color: var(--accent-color);
+        margin-bottom: 1rem;
+      }
+
+      p {
+        font-size: 1.2em;
+        margin-bottom: 2rem;
+        color: #555;
+      }
+
+      .button {
+        margin-bottom: 2rem;
+      }
+
+      .error-image {
+        max-width: 500px;
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+      }
+    }
+  </style>
+
+</html>

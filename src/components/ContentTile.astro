@@ -1,0 +1,42 @@
+---
+import { Content } from "../classes/Content";
+
+interface Props {
+  content: Content;
+}
+
+const { content }: { content: Content } = Astro.props;
+---
+
+<div class="ContentTile">
+  <!-- <img src={content.imageUrl} alt={content.head} /> -->
+  <div class="details">
+    <h2>{content.head}</h2>
+    <p>{content.body}</p>
+  </div>
+</div>
+
+<style lang="scss">
+  .ContentTile {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    img {
+    }
+
+    .details {
+      display: flex;
+      flex-direction: column;
+
+      h2 {
+        font-size: 1.125rem;
+        margin: 0;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+    }
+  }
+</style>

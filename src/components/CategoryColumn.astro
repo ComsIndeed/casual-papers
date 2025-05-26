@@ -1,0 +1,41 @@
+---
+import type { AstroComponentInstance } from "astro/runtime/server/index.js";
+import ContentTile from "../components/ContentTile.astro";
+import { Content } from "../classes/Content";
+
+export interface CategoryColumnProps {
+  label: string;
+  list: Content[];
+}
+
+const { label, list } = Astro.props;
+---
+
+<div class="category-column">
+  <a href="#" class="category-label">{label}</a>
+  <div class="content-tiles">
+    {list.map((content: Content) => <ContentTile content={content} />)}
+  </div>
+</div>
+
+<style>
+  .category-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .category-label {
+    font-weight: bold;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .content-tiles {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    gap: 1rem;
+  }
+</style>

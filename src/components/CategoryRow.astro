@@ -1,0 +1,45 @@
+---
+import type { AstroComponentInstance } from "astro/runtime/server/index.js";
+import ContentCard from "../components/ContentCard.astro";
+import { Content } from "../classes/Content";
+
+export interface CategoryRowProps {
+  label: string;
+  list: Content[];
+}
+
+const { label, list } = Astro.props;
+---
+
+<div class="category-row">
+  <a href="#" class="category-label">{label}</a>
+  <div class="scrollable-row">
+    {list.map((content: Content) => <ContentCard content={content} />)}
+  </div>
+</div>
+
+<style>
+  .category-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .category-label {
+    font-weight: bold;
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .scrollable-row {
+    display: flex;
+    width: 90vw;
+    overflow-x: auto;
+    gap: 1rem;
+  }
+
+  .card-container {
+    flex: 0 0 auto;
+  }
+</style>
