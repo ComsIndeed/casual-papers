@@ -1,0 +1,27 @@
+---
+// src/layouts/DocumentLayout.astro
+import BaseLayout from "./BaseLayout.astro";
+import AppBar from "../components/AppBar.astro";
+import type { Content } from "../classes/Content"; // Import your Content type
+
+export interface Props {
+  content: Content; // Expects a Content object to populate metadata
+  backHref?: string; // Optional: Override default back button link if needed
+}
+
+const { content, backHref = "/" } = Astro.props; // Default back to homepage
+---
+
+<BaseLayout
+  title={content.head}
+  description={content.body.substring(0, 160) + "..."}
+  ogImage={content.imageUrl || "https://example.com/default-doc-image.jpg"}
+  ogUrl={Astro.url.href}
+  ogType="article"
+  author={content.metadata.author}
+>
+  <AppBar title={content.head} showSearchBar={false} backHref={backHref} />
+  <main class="container mx-auto px-4 py-8">
+    <slot />
+  </main>
+</BaseLayout>

@@ -19,4 +19,7 @@ export class Metadata {
         metadata.updatedAt = new Date(data.updatedAt);
         return metadata;
     }
+    setUpdatedAt(date: Date): void {
+        this.updatedAt = date;
+    }
 }

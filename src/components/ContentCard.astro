@@ -3,16 +3,21 @@ import { Content } from "../classes/Content";
 
 interface Props {
   content: Content;
+  style?: string;
 }
 
 const { content }: { content: Content } = Astro.props;
 ---
 
-<div class="ContentCard">
+<a
+  href={`/document/${content.head.replace(/\s+/g, "-").toLowerCase()}_${content.id}`}
+  class="ContentCard"
+  style={Astro.props.style || ""}
+>
   <img src={content.imageUrl} alt={content.head} />
   <h2>{content.head}</h2>
   <p>{content.body}</p>
-</div>
+</a>
 
 <style lang="scss">
   .ContentCard {

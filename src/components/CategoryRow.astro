@@ -14,7 +14,11 @@ const { label, list } = Astro.props;
 <div class="category-row">
   <a href="#" class="category-label">{label}</a>
   <div class="scrollable-row">
-    {list.map((content: Content) => <ContentCard content={content} />)}
+    {
+      list.map((content: Content) => (
+        <ContentCard content={content} style="scroll-snap-align: start;" />
+      ))
+    }
   </div>
 </div>
 
@@ -22,10 +26,11 @@ const { label, list } = Astro.props;
   .category-row {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
   }
 
   .category-label {
+    margin-top: 1.5em;
+    font-size: 1.25em;
     font-weight: bold;
     text-decoration: none;
     color: inherit;
@@ -34,13 +39,8 @@ const { label, list } = Astro.props;
 
   .scrollable-row {
     display: flex;
-    width: 90vw;
     overflow-x: auto;
     gap: 1rem;
-    scroll-snap-type: x mandatory; /* Enable horizontal snapping */
-  }
-
-  .ContentCard {
-    scroll-snap-align: start; /* Ensure each card aligns at the start */
+    scroll-snap-type: x mandatory;
   }
 </style>

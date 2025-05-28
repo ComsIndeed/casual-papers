@@ -1,6 +1,8 @@
 import { Metadata } from "./Metadata";
+import { v4 as uuidv4 } from "uuid";
 
 export class Content {
+    id: string = uuidv4();
     imageUrl: string | null;
     head: string;
     body: string;
@@ -10,8 +12,10 @@ export class Content {
         this.head = head;
         this.body = body;
         this.metadata = new Metadata(author, tags);
-        this.imageUrl = imageUrl;
+        this.imageUrl = imageUrl || null;
     }
+
+    
 }
 
 

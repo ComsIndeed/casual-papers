@@ -1,0 +1,67 @@
+---
+// src/layouts/BaseLayout.astro
+
+export interface Props {
+  title: string; // Page title (required)
+  description?: string; // For SEO and meta description
+  ogImage?: string; // Open Graph image URL for social media cards
+  ogUrl?: string; // Canonical URL for the page
+  ogType?: string; // Open Graph type (e.g., 'website', 'article')
+  author?: string; // Article author, if applicable
+}
+
+const {
+  title,
+  description = "Your go-to place for fun and casual research papers.",
+  ogImage,
+  ogUrl = Astro.url.href, // Defaults to current page URL
+  ogType = "website",
+  author,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={ogUrl} />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={ogUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {author && <meta property="article:author" content={author} />}
+
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={ogUrl} />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    {ogImage && <meta property="twitter:image" content={ogImage} />}
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style is:global>
+      /* Custom font for a modern look */
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+      body {
+        font-family: "Inter", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #f8fafc; /* Very light gray background */
+        color: #1f2937; /* Dark gray text */
+      }
+      /* Style for the main content area to push it below the app bar */
+      main {
+        padding-top: 6.5rem; /* Adjust based on app bar height */
+      }
+    </style>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

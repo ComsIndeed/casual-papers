@@ -3,8 +3,9 @@ import CategoryRow from "../components/CategoryRow.astro";
 import CategoryColumn from "../components/CategoryColumn.astro";
 import { Content } from "../classes/Content";
 import "../styles/global.scss";
+import HomeLayout from "../layouts/HomeLayout.astro";
 
-const contents: Content[] = [
+export const contents: Content[] = [
   new Content(
     "The Joy of Casual Research",
     "A light-hearted exploration of the world of casual research papers, where fun meets academia.",
@@ -20,7 +21,7 @@ const contents: Content[] = [
     "https://images.unsplash.com/photo-1570929057588-6952f7dd2305?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
   ),
   new Content(
-    "Coffee vs. Tea: The Eternal Debate",
+    "Coffee vs. Tea - The Eternal Debate",
     "A humorous take on the age-old rivalry between coffee and tea lovers.",
     "Jane Austen",
     ["lifestyle", "humor"],
@@ -84,40 +85,22 @@ const contents: Content[] = [
 ];
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Document</title>
-  </head>
-  <body>
-    <nav></nav>
-    <section id="top">
-      <h1>Casual Papers</h1>
-      <p>Your go-to place for fun and casual research papers.</p>
-    </section>
-    <section id="cards">
-      <CategoryRow label="Featured" list={contents} />
-      <CategoryColumn label="Papers" list={contents} />
-    </section>
-  </body>
+<HomeLayout
+  title="Casual Papers"
+  description="Your go-to place for fun and casual research papers. Explore light-hearted articles on various topics, from psychology to technology."
+  ogImage="https://images.unsplash.com/photo-1570929057588-6952f7dd2305?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  ogUrl={Astro.url.href}
+>
+  <section id="cards">
+    <CategoryRow label="Featured" list={contents} />
+    <CategoryColumn label="Papers" list={contents} />
+  </section>
+</HomeLayout>
 
-  <style lang="scss">
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-
-      #top {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 30vh;
-        color: var(--text-color);
-        text-align: center;
-      }
-    }
-  </style>
-</html>
+<style lang="scss">
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+</style>

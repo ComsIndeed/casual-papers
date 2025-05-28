@@ -8,19 +8,23 @@ interface Props {
 const { content }: { content: Content } = Astro.props;
 ---
 
-<div class="ContentTile">
+<a
+  class="ContentTile"
+  href={`/document/${content.head.replace(/\s+/g, "-").toLowerCase()}_${content.id}`}
+>
   <!-- <img src={content.imageUrl} alt={content.head} /> -->
   <div class="details">
     <h2>{content.head}</h2>
     <p>{content.body}</p>
   </div>
-</div>
+</a>
 
 <style lang="scss">
   .ContentTile {
     display: flex;
     flex-direction: row;
     align-items: center;
+    border-bottom: 1px solid rgb(198, 198, 198);
 
     img {
     }
@@ -32,9 +36,11 @@ const { content }: { content: Content } = Astro.props;
       h2 {
         font-size: 1.125rem;
         margin: 0;
+        padding: 0;
       }
 
       p {
+        margin: 0;
         font-size: 1rem;
       }
     }

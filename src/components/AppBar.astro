@@ -1,0 +1,306 @@
+---
+// src/components/AppBar.astro
+
+export interface Props {
+  title: string;
+  showSearchBar?: boolean;
+  backHref?: string;
+  navLinks?: { name: string; href: string }[];
+}
+
+const {
+  title,
+  showSearchBar = false,
+  backHref,
+  navLinks = [
+    { name: "Home", href: "/" },
+    { name: "Articles", href: "/articles" },
+    { name: "About", href: "/about" },
+  ],
+} = Astro.props;
+
+// --- Inline SVG Icons (remain the same) ---
+const searchIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5t1.888-4.612T9.5 3t4.613 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5t-1.312-3.187T9.5 5T6.313 6.313T5 9.5t1.313 3.188T9.5 14"/></svg>`;
+const settingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.78 1.28a2 2 0 0 0 .73 2.73l.15.08a2 2 0 0 1 1 1.74v.44a2 2 0 0 1-2 2v.18a2 2 0 0 0-1 1.73l-.43.25a2 2 0 0 0 0 2l.15.08a2 2 0 0 1 .73 2.73l-.78 1.28a2 2 0 0 0 .73 2.73l.15.08a2 2 0 0 1 1 1.74v.44a2 2 0 0 1 2 2v.18a2 2 0 0 0 1 1.73l.43.25a2 2 0 0 0 2 0l.15-.08a2 2 0 0 1 2.73.73l.78 1.28a2 2 0 0 0-.73 2.73l-.15-.08a2 2 0 0 1-1 1.74v-.44a2 2 0 0 1 2-2v-.18a2 2 0 0 0 1-1.73l.43-.25a2 2 0 0 0 0-2l-.15-.08a2 2 0 0 1-.73-2.73l.78-1.28a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.44a2 2 0 0 1-2-2v-.18a2 2 0 0 0-1-1.73l-.43-.25a2 2 0 0 0-2 0l-.15.08a2 2 0 0 1-2.73-.73l-.78-1.28a2 2 0 0 0-.73-2.73l.15-.08a2 2 0 0 1 1-1.74v-.44a2 2 0 0 1-2-2z"/><circle cx="12" cy="12" r="3"/></svg>`;
+const userIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+const arrowLeftIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>`;
+
+import appIcon from "../assets/favicon.png";
+import AccountSvg from "../icons/account.svg";
+import SettingsSvg from "../icons/settings.svg";
+---
+
+<header class="app-bar-header">
+  <nav class="main-nav">
+    {
+      backHref && (
+        <a href={backHref} class="back-button" aria-label="Go back">
+          <Fragment set:html={arrowLeftIcon} />
+        </a>
+      )
+    }
+
+    <a href="/">
+      <h1 class="app-title">
+        <img src="favicon.png" class="app-icon" width="48" height="48" />
+        {title}
+      </h1>
+    </a>
+
+    <div class="nav-links-wrapper">
+      {
+        navLinks.map((link) => (
+          <a href={link.href} class="nav-link">
+            {link.name}
+          </a>
+        ))
+      }
+    </div>
+
+    <!-- {
+      showSearchBar && (
+        <div class="search-bar-wrapper">
+          <input type="text" placeholder="Search..." />
+          <span class="search-icon">
+            <Fragment set:html={searchIcon} />
+          </span>
+        </div>
+      )
+    } -->
+    <div class="action-buttons">
+      <!-- <a class="action-button" aria-label="Settings">
+        <SettingsSvg width="32" height="32" />
+      </a> -->
+      <a
+        href="/signin"
+        class="action-button"
+        aria-label="Account"
+        id="accountButton"
+      >
+        <AccountSvg id="accountSvg" width="32" height="32" />
+        <img
+          id="profileImage"
+          src=""
+          alt="User Profile"
+          style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; display: none;"
+        />
+      </a>
+    </div>
+  </nav>
+</header>
+
+<script>
+  import { auth } from "../classes/firebase";
+  import { onAuthStateChanged } from "firebase/auth";
+
+  onAuthStateChanged(auth, (user) => {
+    const accountButton = document.getElementById("accountButton");
+    const accountSvg = document.getElementById("accountSvg");
+    const profileImage = document.getElementById(
+      "profileImage"
+    ) as HTMLImageElement;
+
+    if (user && user.photoURL) {
+      profileImage.src = user.photoURL;
+      profileImage.style.display = "block";
+      accountSvg!.style.display = "none";
+    } else {
+      profileImage.style.display = "none";
+      accountSvg!.style.display = "block";
+    }
+  });
+</script>
+
+<style lang="scss">
+  // Variables
+  $primary-color: #2563eb;
+  $text-color-dark: #111827;
+  $text-color-medium: #4b5563;
+  $text-color-light: #9ca3af;
+  $background-color-light: #f3f4f6;
+  $border-color-light: #e5e7eb;
+  $shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  $shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  .app-title {
+    margin: 0.125em 0em;
+    font-size: 1.5rem;
+    font-weight: 800;
+    // Use a text gradient for a colorful effect
+    background: linear-gradient(
+      to right,
+      #6366f1,
+      #3b82f6,
+      #0ea5e9
+    ); // Indigo, Blue, Sky Blue
+    -webkit-background-clip: text; // Clip background to text shape
+    -webkit-text-fill-color: transparent; // Make text transparent to show gradient
+    color: transparent; // Fallback for browsers that don't support text-fill-color
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+
+  .search-icon {
+    display: flex;
+    align-items: center;
+  }
+
+  .app-bar-header {
+    position: sticky; /* Keep it sticky as per your current code */
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    box-shadow: $shadow-lg;
+    z-index: 50;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+  }
+
+  .main-nav {
+    max-width: 1280px; /* Limits width on larger screens */
+    margin: 0 4em; /* Centers the nav horizontally */
+    padding: 0.75rem 1rem; /* py-3 px-4 */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap; /* Prevents wrapping on desktop to keep everything in one line */
+    gap: 1rem; /* Default spacing between items */
+    min-height: 4rem; /* Ensure a consistent height */
+
+    /* Individual element styling */
+    .back-button,
+    .action-button {
+      padding: 0.5rem;
+      border-radius: 9999px; /* Full circle */
+      transition: background-color 0.2s ease-in-out;
+      cursor: pointer;
+
+      &:hover {
+        background-color: $background-color-light;
+      }
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 4px rgba($primary-color, 0.5); /* Focus ring */
+      }
+      svg {
+        display: block; /* Ensure SVG takes up its own space */
+        min-width: 24px; /* Prevent shrinking too much */
+        min-height: 24px;
+      }
+    }
+
+    .app-title {
+      font-size: 1.5rem; /* text-2xl */
+      font-weight: 800; /* font-extrabold */
+      color: $text-color-dark;
+      flex-shrink: 0; /* Prevents title from shrinking */
+    }
+
+    .nav-links-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem; /* Space between nav links */
+      flex-shrink: 0; /* Prevents nav links from shrinking */
+      // Hide quick nav links on small screens to make space
+      @media (max-width: 767px) {
+        display: none;
+      }
+
+      .nav-link {
+        color: $text-color-medium;
+        transition: color 0.2s ease-in-out;
+        border-radius: 0.375rem; /* rounded-md */
+        padding: 0.25rem 0.75rem; /* py-1 px-3 */
+        font-size: 0.875rem; /* text-sm */
+        font-weight: 500; /* font-medium */
+        white-space: nowrap; // Prevent text wrapping
+
+        &:hover {
+          color: $primary-color;
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .search-bar-wrapper {
+      position: relative;
+      flex-grow: 1; /* This is the key: takes up all available space */
+      margin-left: 1rem; /* Push away from nav links */
+      margin-right: 1rem; /* Push away from action buttons */
+      min-width: 150px; /* Ensure search bar is usable even if space is tight */
+
+      // Hide search bar on very small screens if it gets too cramped,
+      // or if `showSearchBar` is false.
+      @media (max-width: 480px) {
+        display: none; // You can adjust this breakpoint or logic
+      }
+
+      input {
+        width: 100%;
+        padding-left: 2.5rem; /* pl-10 */
+        padding-right: 1rem; /* pr-4 */
+        padding-top: 0.5rem; /* py-2 */
+        padding-bottom: 0.5rem; /* py-2 */
+        border-radius: 9999px; /* rounded-full */
+        border: 1px solid $border-color-light;
+        box-shadow: $shadow-sm;
+
+        &:focus {
+          outline: none;
+          box-shadow: 0 0 0 4px rgba($primary-color, 0.5);
+          border-color: transparent;
+        }
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 0.75rem; /* left-3 */
+        top: 50%;
+        transform: translateY(-50%);
+        color: $text-color-light;
+      }
+    }
+
+    .action-buttons {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem; /* space-x-2 */
+      flex-shrink: 0; /* Prevents buttons from shrinking */
+    }
+
+    /* Mobile adjustments: make things wrap if they don't fit */
+    @media (max-width: 767px) {
+      // flex-wrap: wrap; /* Allow wrapping on small screens */
+      justify-content: space-between; /* Center items when wrapped */
+      padding: 0.5rem; // Slightly less padding for mobile
+
+      // For very small screens, place title in center and hide other items
+      .app-title {
+        flex-grow: 1;
+        text-align: center;
+        order: 1; /* Put title in the middle */
+      }
+      .back-button {
+        order: 0;
+        margin-right: auto;
+      }
+      .action-buttons {
+        order: 2;
+        margin-left: auto;
+      }
+
+      .search-bar-wrapper {
+        width: 100%; /* Take full width when wrapped */
+        margin: 0.5rem 0; /* Add vertical margin */
+        order: 4; /* Place below main nav items */
+        min-width: unset; // Remove min-width constraint
+      }
+    }
+  }
+</style>

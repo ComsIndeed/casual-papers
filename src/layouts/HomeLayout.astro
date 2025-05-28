@@ -1,0 +1,39 @@
+---
+// src/layouts/HomeLayout.astro
+import BaseLayout from "./BaseLayout.astro";
+import AppBar from "../components/AppBar.astro";
+
+// Props for the HomeLayout.
+// It accepts all props from BaseLayout plus any specific to HomeLayout.
+export interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  ogUrl?: string;
+  // You could add home-specific props here if needed
+}
+
+const { title, description, ogImage, ogUrl } = Astro.props;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  ogImage={ogImage}
+  ogUrl={ogUrl}
+  ogType="website"
+>
+  <AppBar
+    title={title}
+    showSearchBar={true}
+    navLinks={[
+      { name: "Home", href: "/" },
+      { name: "Categories", href: "/categories" },
+      { name: "About Us", href: "/about" },
+      { name: "Contact", href: "/contact" },
+    ]}
+  />
+  <main class="container mx-auto px-4 py-8">
+    <slot />
+  </main>
+</BaseLayout>
