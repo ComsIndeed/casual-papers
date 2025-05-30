@@ -25,12 +25,11 @@ const { title, description, ogImage, ogUrl } = Astro.props;
 >
   <AppBar
     title={title}
-    showSearchBar={true}
     navLinks={[
       { name: "Home", href: "/" },
       { name: "Categories", href: "/categories" },
       { name: "About Us", href: "/about" },
-      { name: "Contact", href: "/contact" },
+      { name: "Post Something", href: "/write" },
     ]}
   />
   <main class="container mx-auto px-4 py-8">

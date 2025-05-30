@@ -1,88 +1,35 @@
 ---
 import CategoryRow from "../components/CategoryRow.astro";
 import CategoryColumn from "../components/CategoryColumn.astro";
+import CommunityCard from "../components/CommunityCard.astro";
 import { Content } from "../classes/Content";
 import "../styles/global.scss";
 import HomeLayout from "../layouts/HomeLayout.astro";
+import { contents } from "../assets/exampleContents";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../classes/firebase";
 
-export const contents: Content[] = [
-  new Content(
-    "The Joy of Casual Research",
-    "A light-hearted exploration of the world of casual research papers, where fun meets academia.",
-    "Vincent van Gogh",
-    ["article"],
-    "https://images.unsplash.com/photo-1570929057588-6952f7dd2305?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-  ),
-  new Content(
-    "The Art of Procrastination",
-    "An in-depth analysis of why we procrastinate and how to embrace it.",
-    "Leonardo da Vinci",
-    ["psychology", "self-help"],
-    "https://images.unsplash.com/photo-1570929057588-6952f7dd2305?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-  ),
-  new Content(
-    "Coffee vs. Tea - The Eternal Debate",
-    "A humorous take on the age-old rivalry between coffee and tea lovers.",
-    "Jane Austen",
-    ["lifestyle", "humor"],
-    "https://images.unsplash.com/photo-1570929057588-6952f7dd2305?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-  ),
-  new Content(
-    "The Science of Napping",
-    "Exploring the benefits of napping and how to perfect the art.",
-    "Albert Einstein",
-    ["health", "science"],
-    "https://images.unsplash.com/photo-1570929057588-6952f7dd2305?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-  ),
-  new Content(
-    "Why Cats Rule the Internet",
-    "A fun look at how cats became the kings and queens of online content.",
-    "Mark Twain",
-    ["culture", "technology"],
-    "https://images.unsplash.com/photo-1570929057588-6952f7dd2305?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-  ),
-  new Content(
-    "The History of Board Games",
-    "Tracing the evolution of board games from ancient times to modern-day classics.",
-    "Marie Curie",
-    ["history", "games"],
-    "https://images.unsplash.com/photo-1570929057588-6952f7dd2305?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-  ),
-  new Content(
-    "The Psychology of Memes",
-    "Understanding why memes resonate with us and their impact on culture.",
-    "Sigmund Freud",
-    ["psychology", "culture"],
-    "https://images.unsplash.com/photo-1570929057588-6952f7dd2305?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-  ),
-  new Content(
-    "The Secret Life of Plants",
-    "A whimsical exploration of how plants communicate and interact with their environment.",
-    "Charles Darwin",
-    ["science", "nature"],
-    "https://images.unsplash.com/photo-1570929057588-6952f7dd2305?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-  ),
-  new Content(
-    "The Rise of Casual Gaming",
-    "How casual gaming has transformed the gaming industry and its audience.",
-    "Ada Lovelace",
-    ["technology", "games"],
-    "https://images.unsplash.com/photo-1570929057588-6952f7dd2305?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-  ),
-  new Content(
-    "The Philosophy of Everyday Objects",
-    "Finding deeper meaning in the mundane things around us.",
-    "Socrates",
-    ["philosophy", "lifestyle"],
-    "https://images.unsplash.com/photo-1570929057588-6952f7dd2305?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-  ),
-  new Content(
-    "The Joy of Walking",
-    "Rediscovering the simple pleasure of walking and its benefits.",
-    "Henry David Thoreau",
-    ["health", "lifestyle"]
-  ),
-];
+const contentCollectionRef = collection(
+  db,
+  "casualpapers",
+  "contents",
+  "content_collection"
+);
+const documents = await getDocs(contentCollectionRef);
+const fetchedContents = documents.docs.map((doc) => {
+  try {
+    const data = doc.data() as object;
+    const value = Object.values(data)[0];
+    const content = Content.fromJson(value);
+    return content;
+  } catch {
+    console.error("Error parsing content:", doc.data());
+    return; // Skip this document
+  }
+});
+const cleanedContents = fetchedContents.filter(
+  (content) => content !== undefined
+);
 ---
 
 <HomeLayout
@@ -92,8 +39,9 @@ export const contents: Content[] = [
   ogUrl={Astro.url.href}
 >
   <section id="cards">
-    <CategoryRow label="Featured" list={contents} />
-    <CategoryColumn label="Papers" list={contents} />
+    <CommunityCard />
+    <CategoryRow label="Featured" list={cleanedContents} />
+    <CategoryColumn label="Papers" list={cleanedContents} />
   </section>
 </HomeLayout>
 
@@ -102,5 +50,9 @@ export const contents: Content[] = [
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    #cards {
+      padding: 0em 1em;
+    }
   }
 </style>

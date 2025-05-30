@@ -20,14 +20,12 @@ const {
 } = Astro.props;
 
 // --- Inline SVG Icons (remain the same) ---
-const searchIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m19.6 21l-6.3-6.3q-.75.6-1.725.95T9.5 16q-2.725 0-4.612-1.888T3 9.5t1.888-4.612T9.5 3t4.613 1.888T16 9.5q0 1.1-.35 2.075T14.7 13.3l6.3 6.3zM9.5 14q1.875 0 3.188-1.312T14 9.5t-1.312-3.187T9.5 5T6.313 6.313T5 9.5t1.313 3.188T9.5 14"/></svg>`;
-const settingsIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-settings"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.78 1.28a2 2 0 0 0 .73 2.73l.15.08a2 2 0 0 1 1 1.74v.44a2 2 0 0 1-2 2v.18a2 2 0 0 0-1 1.73l-.43.25a2 2 0 0 0 0 2l.15.08a2 2 0 0 1 .73 2.73l-.78 1.28a2 2 0 0 0 .73 2.73l.15.08a2 2 0 0 1 1 1.74v.44a2 2 0 0 1 2 2v.18a2 2 0 0 0 1 1.73l.43.25a2 2 0 0 0 2 0l.15-.08a2 2 0 0 1 2.73.73l.78 1.28a2 2 0 0 0-.73 2.73l-.15-.08a2 2 0 0 1-1 1.74v-.44a2 2 0 0 1 2-2v-.18a2 2 0 0 0 1-1.73l.43-.25a2 2 0 0 0 0-2l-.15-.08a2 2 0 0 1-.73-2.73l.78-1.28a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.44a2 2 0 0 1-2-2v-.18a2 2 0 0 0-1-1.73l-.43-.25a2 2 0 0 0-2 0l-.15.08a2 2 0 0 1-2.73-.73l-.78-1.28a2 2 0 0 0-.73-2.73l.15-.08a2 2 0 0 1 1-1.74v-.44a2 2 0 0 1-2-2z"/><circle cx="12" cy="12" r="3"/></svg>`;
 const userIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
 const arrowLeftIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>`;
 
 import appIcon from "../assets/favicon.png";
-import AccountSvg from "../icons/account.svg";
-import SettingsSvg from "../icons/settings.svg";
+import IconButton from "./IconButton.astro";
+import { auth } from "../classes/firebase";
 ---
 
 <header class="app-bar-header">
@@ -40,12 +38,10 @@ import SettingsSvg from "../icons/settings.svg";
       )
     }
 
-    <a href="/">
-      <h1 class="app-title">
-        <img src="favicon.png" class="app-icon" width="48" height="48" />
-        {title}
-      </h1>
-    </a>
+    <h1 class="app-title">
+      <img src="/favicon.png" class="app-icon" width="48" height="48" />
+      {title}
+    </h1>
 
     <div class="nav-links-wrapper">
       {
@@ -68,45 +64,30 @@ import SettingsSvg from "../icons/settings.svg";
       )
     } -->
     <div class="action-buttons">
-      <!-- <a class="action-button" aria-label="Settings">
-        <SettingsSvg width="32" height="32" />
-      </a> -->
-      <a
-        href="/signin"
-        class="action-button"
-        aria-label="Account"
-        id="accountButton"
-      >
-        <AccountSvg id="accountSvg" width="32" height="32" />
-        <img
-          id="profileImage"
-          src=""
-          alt="User Profile"
-          style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; display: none;"
-        />
+      <!-- <button class="action-button" aria-label="Settings">
+        <Fragment set:html={settingsIcon} />
+      </button> -->
+      <a href="/signin" class="action-button signInButton" aria-label="Account">
+        <IconButton icon="account" label="Account button" />
+        <img style="display: none;" width="40" height="40" />
       </a>
     </div>
   </nav>
 </header>
 
 <script>
-  import { auth } from "../classes/firebase";
   import { onAuthStateChanged } from "firebase/auth";
+  import { auth } from "../classes/firebase";
 
+  const iconButton = document.querySelector(".signInButton .icon-button")!;
+  const img = document.querySelector(".signInButton img")!;
   onAuthStateChanged(auth, (user) => {
-    const accountButton = document.getElementById("accountButton");
-    const accountSvg = document.getElementById("accountSvg");
-    const profileImage = document.getElementById(
-      "profileImage"
-    ) as HTMLImageElement;
-
-    if (user && user.photoURL) {
-      profileImage.src = user.photoURL;
-      profileImage.style.display = "block";
-      accountSvg!.style.display = "none";
+    if (!user || !user.photoURL) {
+      img.setAttribute("style", "display: none;"); // Hide image if not signed in
     } else {
-      profileImage.style.display = "none";
-      accountSvg!.style.display = "block";
+      iconButton.setAttribute("style", "display: none;");
+      img.setAttribute("src", user.photoURL); // Use user's photo or default icon
+      img.setAttribute("style", "display: block;"); // Show image if signed in
     }
   });
 </script>
@@ -123,6 +104,12 @@ import SettingsSvg from "../icons/settings.svg";
   $shadow-lg:
     0 10px 15px -3px rgba(0, 0, 0, 0.1),
     0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  .signInButton img {
+    border-radius: 10em;
+    padding: 0.1em;
+    border: 2px solid red;
+  }
 
   .app-title {
     margin: 0.125em 0em;
@@ -167,8 +154,8 @@ import SettingsSvg from "../icons/settings.svg";
     margin: 0 4em; /* Centers the nav horizontally */
     padding: 0.75rem 1rem; /* py-3 px-4 */
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     flex-wrap: nowrap; /* Prevents wrapping on desktop to keep everything in one line */
     gap: 1rem; /* Default spacing between items */
     min-height: 4rem; /* Ensure a consistent height */
@@ -276,22 +263,22 @@ import SettingsSvg from "../icons/settings.svg";
 
     /* Mobile adjustments: make things wrap if they don't fit */
     @media (max-width: 767px) {
-      // flex-wrap: wrap; /* Allow wrapping on small screens */
-      justify-content: space-between; /* Center items when wrapped */
+      flex-wrap: wrap; /* Allow wrapping on small screens */
+      justify-content: center; /* Center items when wrapped */
       padding: 0.5rem; // Slightly less padding for mobile
 
       // For very small screens, place title in center and hide other items
       .app-title {
         flex-grow: 1;
         text-align: center;
-        order: 1; /* Put title in the middle */
+        order: 2; /* Put title in the middle */
       }
       .back-button {
-        order: 0;
+        order: 1;
         margin-right: auto;
       }
       .action-buttons {
-        order: 2;
+        order: 3;
         margin-left: auto;
       }
 

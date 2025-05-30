@@ -1,0 +1,89 @@
+
+.expansion-tile {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--card-background);
+  box-shadow: var(--shadow);
+
+  .tile-header {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    cursor: pointer;
+    gap: 1rem;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .approve-btn,
+  .reject-btn {
+    border: none;
+    background: none;
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+  }
+
+  .approve-btn {
+    color: #4caf50;
+  }
+
+  .reject-btn {
+    color: #f44336;
+  }
+
+  .title-section {
+    flex-grow: 1;
+  }
+
+  h3 {
+    margin: 0;
+    color: var(--text-color);
+  }
+
+  .metadata {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 0.5rem;
+  }
+
+  .separator {
+    margin: 0 0.5rem;
+  }
+
+  .content-body {
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+  }
+
+  &.expanded .content-body {
+    padding: 1rem;
+    max-height: 1000px;
+    border-top: 1px solid var(--border-color);
+  }
+}
+
+@media (max-width: 768px) {
+  .metadata {
+    flex-direction: column;
+    gap: 0.25rem;
+
+    .separator {
+      display: none;
+    }
+  }
+}

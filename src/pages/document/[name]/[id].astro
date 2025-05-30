@@ -1,0 +1,153 @@
+---
+// This is the document page
+// src/pages/document/[name]/[id].astro
+import type { GetStaticPaths, InferGetStaticPropsType } from "astro";
+// import { contents } from "../../assets/exampleContents";
+import DocumentLayout from "../../../layouts/DocumentLayout.astro";
+import { db } from "../../../classes/firebase";
+import { collection, getDocs } from "firebase/firestore";
+import { Content } from "../../../classes/Content";
+import { createSlug } from "../../../lib/utils/createSlug";
+import { Markdown } from "@astropub/md";
+
+export const getStaticPaths = (async () => {
+  const contentCollectionRef = collection(
+    db,
+    "casualpapers",
+    "contents",
+    "content_collection"
+  );
+  const documents = await getDocs(contentCollectionRef);
+  const fetchedContents = documents.docs.map((doc) => {
+    try {
+      const data = doc.data() as object;
+      const value = Object.values(data)[0]; // Assuming your Firestore document structure is { "someKey": ContentObject }
+      const content = Content.fromJson(value);
+      return content;
+    } catch (error) {
+      console.error(
+        "Error parsing content from document:",
+        doc.id,
+        doc.data(),
+        error
+      );
+      return; // Skip this document if parsing fails
+    }
+  });
+
+  const cleanedContents = fetchedContents.filter(
+    (content): content is Content => content !== undefined // Type assertion for filter
+  );
+
+  return cleanedContents.map((content) => ({
+    params: {
+      name: createSlug(content.head),
+      id: content.id.toString(),
+    },
+    props: { content }, // Pass the individual content object as a prop
+  }));
+}) satisfies GetStaticPaths;
+
+// Infer the props type from getStaticPaths
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+const { content } = Astro.props as Props; // Destructure content from Astro.props
+---
+
+<DocumentLayout content={content} backHref="/">
+  <header class="header">
+    {
+      content.imageUrl && (
+        <img src={content.imageUrl} alt={content.head} class="header-image" />
+      )
+    }
+    <h1 class="header-title">{content.head}</h1>
+    <p class="header-author">
+      <strong>Author:</strong>
+      {content.metadata.author}
+    </p>
+    <p class="header-date">
+      <strong>Published:</strong>
+      {content.metadata.createdAt.toLocaleDateString()}
+    </p>
+    <div class="header-tags">
+      {content.metadata.tags.map((tag) => <span class="tag">{tag}</span>)}
+    </div>
+  </header>
+  <article class="article">
+    <Markdown of={content.body} />
+  </article>
+</DocumentLayout>
+
+<style lang="scss">
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+  }
+  .header {
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+    margin-left: 2em;
+
+    .header-image {
+      height: 16rem;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 1.5rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .header-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+    }
+
+    .header-author {
+      color: #4b5563;
+      margin-bottom: 0.25rem;
+    }
+
+    .header-date {
+      color: #4b5563;
+      font-size: 0.875rem;
+    }
+
+    .header-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+
+      .tag {
+        background-color: #bfdbfe;
+        color: #1e40af;
+        font-size: 0.75rem;
+        font-weight: 500;
+        padding: 0.25rem 0.625rem;
+        border-radius: 9999px;
+      }
+    }
+  }
+
+  .article {
+    font-family: Georgia, serif;
+    font-size: 1rem;
+    color: #374151;
+    line-height: 1.75;
+    max-width: 48rem;
+    margin-left: 2em;
+  }
+
+  @media (max-width: 767px) {
+    .header {
+      margin-left: 0em;
+    }
+    .article {
+      margin-left: 0em;
+    }
+  }
+</style>

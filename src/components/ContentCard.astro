@@ -1,53 +1,136 @@
 ---
 import { Content } from "../classes/Content";
+import { createSlug } from "../lib/utils/createSlug";
 
 interface Props {
   content: Content;
+  href?: string; // Optional prop for custom routing
+  size?: string; // Optional prop for sizing
   style?: string;
 }
 
-const { content }: { content: Content } = Astro.props;
+const {
+  content,
+  href,
+  size,
+  style,
+}: { content: Content; href?: string; size?: string; style?: string } =
+  Astro.props;
 ---
 
 <a
-  href={`/document/${content.head.replace(/\s+/g, "-").toLowerCase()}_${content.id}`}
+  href={href || `/document/${createSlug(content.head)}/${content.id}`}
   class="ContentCard"
-  style={Astro.props.style || ""}
+  style={style}
 >
-  <img src={content.imageUrl} alt={content.head} />
-  <h2>{content.head}</h2>
-  <p>{content.body}</p>
+  <div class="image-overlay">
+    <h2 class="ContentCard-Head">{content.head}</h2>
+  </div>
+  <img src={content.imageUrl} alt={content.head} loading="lazy" />
 </a>
 
 <style lang="scss">
+  :root {
+    --small-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
   .ContentCard {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    height: 16em;
-    min-width: 16em;
-    overflow-y: hidden;
+    position: relative; /* Allows absolute positioning of children */
+    display: block; /* Makes the entire link clickable and block-level */
+    border-radius: 12px; /* Rounded corners for the card */
+    overflow: hidden; /* Ensures content/image respects border-radius */
+    transition:
+      transform 0.2s ease-in-out,
+      box-shadow 0.2s ease-in-out; /* Smooth transitions for hover effects */
+    box-shadow: var(--small-shadow); /* Subtle initial shadow */
+    color: white; /* Default text color on the image for contrast */
+    text-decoration: none; /* Removes default underline from the anchor tag */
+    min-width: 12em;
+    min-height: calc(12em * 4 / 3);
+    max-width: 12em;
+    max-height: calc(12em * 4 / 3);
+  }
 
-    img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 4px;
-      margin-bottom: 1rem;
+  @media (max-width: 767px) {
+    .ContentCard {
+      min-width: 9em; /* Adjusts width for smaller screens */
+      min-height: calc(9em * 4 / 3); /* Maintains aspect ratio */
+      max-width: 9em; /* Adjusts width for smaller screens */
+      max-height: calc(9em * 4 / 3); /* Maintains aspect ratio */
+
+      .image-overlay {
+        padding: 0.4em;
+
+        h2 {
+          font-size: 0.8em;
+          margin: 0 0 0.1em 0;
+        }
+      }
     }
+  }
 
-    h2 {
-      font-size: 1.125rem;
-      margin-bottom: 0.5rem;
-    }
+  .ContentCard-Head {
+    color: white;
+  }
 
-    p {
-      font-size: 1rem;
-      color: #666;
+  .ContentCard:hover {
+    transform: translateY(-3px); /* Lifts the card slightly on hover */
+    box-shadow: var(--shadow); /* Increases shadow on hover */
+  }
+
+  .ContentCard img {
+    display: block; /* Removes extra space below image */
+    width: 100%; /* Image takes full width of its container */
+    height: 100%; /* Image takes full height of its container */
+    object-fit: cover; /* Ensures image covers the area without distortion, cropping if necessary */
+    transition: filter 0.3s ease-in-out; /* Smooth transition for the darkening effect */
+  }
+
+  .ContentCard:hover img {
+    filter: brightness(
+      0.7
+    ); /* Darkens the image on hover for better text contrast */
+  }
+
+  .image-overlay {
+    position: absolute; /* Positions the overlay over the image */
+    bottom: 0; /* Position at the bottom */
+    left: 0; /* Position at the left */
+    width: 100%;
+    height: 100%;
+    padding: 1.5em; /* Increased padding around text */
+    text-align: left; /* Align text to the left */
+    /* Gradient overlay for better text readability */
+    background: linear-gradient(
+      to top,
+      rgba(10, 5, 109, 0.7) 0%,
+      rgba(6, 11, 98, 0) 100%
+    );
+    z-index: 1; /* Ensure the overlay is on top of the image */
+    display: flex; /* Use flexbox to align content */
+    align-items: flex-end; /* Align title to the bottom */
+  }
+
+  .ContentCard h2 {
+    font-family: "Lora", serif; /* Applies the Lora font to the title */
+    font-size: 1.1em; /* Default font size for the title */
+    margin: 0; /* Removes default h2 margins */
+    transition: font-size 0.3s ease-in-out; /* Smooth transition for font size change */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Adds a shadow to the text for improved readability */
+    line-height: 1.3; /* Adjust line height for better appearance */
+  }
+
+  .ContentCard:hover h2 {
+    font-size: 1.2rem; /* Increases font size on hover */
+  }
+
+  @media (max-width: 768px) {
+    .ContentCard {
+      min-height: 9em;
+      min-width: calc(9em * 4 / 3);
+      max-height: 9em;
+      max-width: calc(9em * 4 / 3);
     }
   }
 </style>

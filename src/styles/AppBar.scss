@@ -1,0 +1,309 @@
+// src/components/AppBar.scss
+
+// Import global variables to ensure consistency
+@import '../styles/global.scss';
+
+.app-bar-header {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100vw; /* Take up the whole width */
+  background-color: var(--card-background); /* Using global card background for consistency */
+  box-shadow: var(--shadow); /* Using more pronounced global shadow */
+  z-index: 50;
+  border-bottom-left-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
+  overflow: hidden; /* Important: Ensures content doesn't spill out */
+  // Fancy touch: Subtle gradient overlay for depth
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(255,255,255,0.2), rgba(255,255,255,0));
+    pointer-events: none;
+    z-index: 1; /* Above background but below content */
+  }
+}
+
+.main-nav {
+  max-width: 1280px; /* Max width for inner content */
+  margin: 0 auto; /* Centers the content */
+  padding: 1rem 2em; /* Generous padding */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap; /* CRUCIAL: Keeps everything on one line */
+  min-height: 4.5rem; /* Standard height */
+  gap: 1.5rem; /* Spacing between main sections */
+  position: relative; // For z-index of content
+  z-index: 2; // Ensure content is above the pseudo-element overlay
+
+  /* Allow flex items to shrink below their content size if needed */
+  & > * {
+    min-width: 0;
+  }
+
+  .nav-left,
+  .nav-right {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0; /* Prevents these sections from shrinking */
+    gap: 1rem;
+  }
+
+  .icon {
+    display: block; /* Ensure SVG fills its container */
+    width: 24px;
+    height: 24px;
+    color: var(--text-color-medium);
+  }
+
+  .mobile-menu-button {
+    display: none; /* Hidden by default on larger screens */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.6rem;
+    border-radius: 50%;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-out;
+    flex-shrink: 0; /* Ensures it stays its size */
+
+    &:hover {
+      background-color: var(--background-color-light);
+      transform: scale(1.1); /* Subtle hover effect */
+    }
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+
+  .back-button {
+    padding: 0.6rem;
+    border-radius: 50%;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-out;
+    flex-shrink: 0;
+
+    &:hover {
+      background-color: var(--background-color-light);
+      transform: translateX(-3px); /* Subtle back animation */
+    }
+    &:active {
+      transform: translateX(0);
+    }
+  }
+
+  .app-brand-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    flex-shrink: 0;
+    overflow: hidden; /* Hide overflow from title */
+  }
+
+  .app-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px; /* Slightly more rounded corners for app icon */
+    box-shadow: var(--small-shadow);
+    object-fit: cover;
+    flex-shrink: 0;
+    transition: transform 0.2s ease-out; /* Add transition for fancy hover */
+
+    &:hover {
+      transform: rotate(5deg); /* A playful tilt on hover */
+    }
+  }
+
+  .app-title {
+    margin: 0;
+    font-family: 'Lora', serif; /* Using global heading font */
+    font-size: clamp(1.5rem, 4vw, 2.2rem); /* Dynamic font size for fancy scaling */
+    font-weight: 700; /* Lora's bold */
+    background: linear-gradient(
+      to right,
+      var(--primary-color),
+      var(--accent-color)
+    ); /* Using global colors for gradient */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: var(--primary-color); /* Fallback */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1; /* Allow to shrink gracefully */
+  }
+
+  .nav-links-wrapper {
+    display: flex; /* Show by default */
+    align-items: center;
+    gap: 2rem;
+    flex-grow: 1; /* Takes available space */
+    justify-content: center; /* Center nav links */
+    overflow-x: auto; /* Enable horizontal scrolling if links overflow */
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 5px; /* Space for scrollbar if present */
+    margin: 0 1rem; /* Space on either side */
+
+    /* Hide scrollbar */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    .nav-link {
+      position: relative;
+      color: var(--text-color-medium);
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      font-weight: 600; /* Slightly bolder */
+      border-radius: 0.5rem; /* Nicely rounded */
+      transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out,
+        transform 0.1s ease-out;
+      white-space: nowrap;
+      flex-shrink: 0;
+
+      &:hover {
+        color: var(--primary-color);
+        background-color: var(--background-color-light);
+        transform: translateY(-2px); /* Lift effect */
+      }
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0.25rem;
+        left: 50%;
+        transform: translateX(-50%) scaleX(0);
+        width: 80%;
+        height: 2px;
+        background-color: var(--accent-color);
+        transition: transform 0.3s ease-in-out;
+      }
+      &:hover::after {
+        transform: translateX(-50%) scaleX(1); /* Underline from center */
+      }
+      &.active {
+        color: var(--primary-color);
+        font-weight: 700;
+        &::after {
+          transform: translateX(-50%) scaleX(1);
+        }
+      }
+    }
+  }
+
+  .account-button {
+    padding: 0.6rem;
+    border-radius: 50%;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease-out;
+    flex-shrink: 0;
+    display: flex; /* To center icon/image */
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background-color: var(--background-color-light);
+      transform: scale(1.05); /* Slight scale on hover */
+    }
+    &:active {
+      transform: scale(0.98);
+    }
+
+    .icon {
+      width: 28px;
+      height: 28px;
+      color: var(--primary-color); /* Primary color for icon */
+    }
+
+    .profile-image {
+      width: 32px; /* Slightly larger for presence */
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid var(--accent-color); /* Highlight with accent */
+      object-fit: cover;
+      transition: border-color 0.2s ease-in-out;
+
+      &:hover {
+        border-color: var(--primary-color); /* Change border on hover */
+      }
+    }
+  }
+
+  /* --- Mobile Adjustments (max-width 768px) --- */
+  @media (max-width: 768px) {
+    padding: 0.75rem 1rem; /* Tighter padding for mobile */
+    min-height: 3.5rem; /* Smaller height */
+    gap: 0.5rem; /* Tighter spacing */
+
+    .nav-left {
+      order: 0;
+      gap: 0.5rem;
+    }
+
+    .mobile-menu-button {
+      display: block; /* Show menu button */
+      width: 38px; /* Larger touch target */
+      height: 38px;
+      padding: 0; /* Remove padding as size is set by width/height */
+      .icon {
+        width: 28px;
+        height: 28px;
+      }
+    }
+
+    .back-button {
+      display: none; /* Hide back button on mobile when menu is primary nav */
+    }
+
+    .app-brand-link {
+      order: 1;
+      flex-grow: 1; /* Allows it to take space and push account button right */
+      justify-content: center; /* Centers the brand elements */
+      overflow: hidden; /* Ensure title truncation works */
+      gap: 0.5rem;
+    }
+
+    .app-icon {
+      width: 36px; /* Smaller app icon */
+      height: 36px;
+      border-radius: 8px; /* Match global */
+      transform: none; /* Remove hover effect on mobile */
+    }
+
+    .app-title {
+      font-size: clamp(1rem, 3.5vw, 1.4rem); /* Smaller, dynamically scaled font */
+      max-width: calc(100% - 45px); /* Adjusted max-width for truncation */
+      text-align: center;
+    }
+
+    .nav-links-wrapper {
+      display: none; /* Hide nav links on mobile */
+    }
+
+    .nav-right {
+      order: 2; /* Last item */
+      gap: 0.5rem;
+    }
+
+    .account-button {
+      width: 38px; /* Larger touch target */
+      height: 38px;
+      padding: 0; /* Remove padding */
+
+      .icon {
+        width: 28px;
+        height: 28px;
+      }
+
+      .profile-image {
+        width: 32px; /* Smaller profile image */
+        height: 32px;
+        border-width: 1px; /* Thinner border */
+      }
+    }
+  }
+}

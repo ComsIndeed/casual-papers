@@ -1,88 +1,17 @@
 ---
 import HomeLayout from "../layouts/HomeLayout.astro";
 import { Content } from "../classes/Content";
-import { contents } from "./index.astro";
-
-// This is a placeholder - you'll replace this with your data fetching logic
-const submissions: Content[] = contents;
+import "../styles/ExpansionTile.scss";
+import { SubmissionsList } from "../components/admin/SubmissionsList";
+import "../styles/ExpansionTile.scss";
 ---
 
 <HomeLayout title="Admin Panel - Casual Papers">
   <div class="admin-container">
     <h1>Content Submissions</h1>
-    <div class="submissions-list">
-      {
-        submissions.map((submission) => (
-          <div class="expansion-tile">
-            <div class="tile-header">
-              <div class="action-buttons">
-                <button class="approve-btn" data-id={submission.id}>
-                  <svg viewBox="0 0 24 24" width="24" height="24">
-                    <path
-                      fill="currentColor"
-                      d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"
-                    />
-                  </svg>
-                </button>
-                <button class="reject-btn" data-id={submission.id}>
-                  <svg viewBox="0 0 24 24" width="24" height="24">
-                    <path
-                      fill="currentColor"
-                      d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <div class="title-section" data-id={submission.id}>
-                <h3>{submission.head}</h3>
-                <div class="metadata">
-                  <span>By {submission.metadata.author}</span>
-                  <span class="separator">|</span>
-                  <span>Tags: {submission.metadata.tags.join(", ")}</span>
-                  <span class="separator">|</span>
-                  <span>
-                    {submission.metadata.createdAt.toLocaleDateString()}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div class="content-body">
-              <p>{submission.body}</p>
-            </div>
-          </div>
-        ))
-      }
-    </div>
+    <SubmissionsList client:load />
   </div>
 </HomeLayout>
-
-<script>
-  // Setup click handlers for expansion tiles
-  document.querySelectorAll(".title-section").forEach((title) => {
-    title.addEventListener("click", (e) => {
-      const tile = (e.currentTarget as HTMLElement).closest(".expansion-tile");
-      tile?.classList.toggle("expanded");
-    });
-  });
-
-  // Approve button handler
-  document.querySelectorAll(".approve-btn").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const id = (e.currentTarget as HTMLElement).dataset.id;
-      // Add your approve logic here
-      console.log("Approve:", id);
-    });
-  });
-
-  // Reject button handler
-  document.querySelectorAll(".reject-btn").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      const id = (e.currentTarget as HTMLElement).dataset.id;
-      // Add your reject logic here
-      console.log("Reject:", id);
-    });
-  });
-</script>
 
 <style lang="scss">
   .admin-container {
@@ -96,94 +25,5 @@ const submissions: Content[] = contents;
     flex-direction: column;
     gap: 1rem;
     margin-top: 2rem;
-  }
-
-  .expansion-tile {
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    overflow: hidden;
-    background: var(--card-background);
-    box-shadow: var(--shadow);
-
-    .tile-header {
-      display: flex;
-      align-items: center;
-      padding: 1rem;
-      cursor: pointer;
-      gap: 1rem;
-    }
-
-    .action-buttons {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .approve-btn,
-    .reject-btn {
-      border: none;
-      background: none;
-      padding: 0.5rem;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: background-color 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      &:hover {
-        background-color: rgba(0, 0, 0, 0.05);
-      }
-    }
-
-    .approve-btn {
-      color: #4caf50;
-    }
-
-    .reject-btn {
-      color: #f44336;
-    }
-
-    .title-section {
-      flex-grow: 1;
-    }
-
-    h3 {
-      margin: 0;
-      color: var(--text-color);
-    }
-
-    .metadata {
-      font-size: 0.9rem;
-      color: #666;
-      margin-top: 0.5rem;
-    }
-
-    .separator {
-      margin: 0 0.5rem;
-    }
-
-    .content-body {
-      padding: 0;
-      max-height: 0;
-      overflow: hidden;
-      transition: all 0.3s ease-in-out;
-    }
-
-    &.expanded .content-body {
-      padding: 1rem;
-      max-height: 1000px;
-      border-top: 1px solid var(--border-color);
-    }
-  }
-
-  @media (max-width: 768px) {
-    .metadata {
-      flex-direction: column;
-      gap: 0.25rem;
-
-      .separator {
-        display: none;
-      }
-    }
   }
 </style>

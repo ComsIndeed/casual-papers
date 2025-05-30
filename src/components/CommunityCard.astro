@@ -1,0 +1,93 @@
+---
+
+---
+
+<div id="community-card" class="card" style="display: none;">
+  <div class="content">
+    <div class="text">
+      <span>💡</span>
+      <p>
+        Our community is still new! You can contribute by uploading your own
+        writings.
+      </p>
+    </div>
+    <div class="actions">
+      <button
+        class="dismissButton"
+        id="homepage-info-discard-button"
+        onclick="dismissCard();">Dismiss and don't show again</button
+      >
+      <button class="postButton" id="homepage-info-post-button">Post now</button
+      >
+    </div>
+  </div>
+</div>
+
+<script>
+  console.log("RAN");
+  if (
+    localStorage.getItem(
+      "communityCardDismissed_bad3a90b-417f-4385-ae9f-245870e4abb4"
+    ) != "true"
+  ) {
+    document.getElementById("community-card")!.style.display = "block";
+    document
+      .getElementById("homepage-info-post-button")!
+      .addEventListener("click", function () {
+        window.location.href = "/write";
+      });
+    document
+      .getElementById("homepage-info-discard-button")!
+      .addEventListener("click", function () {
+        const card = document.getElementById("community-card");
+        if (card) card.style.display = "none";
+        // Optionally, you can store a flag in localStorage to remember the dismissal
+        localStorage.setItem(
+          "communityCardDismissed_bad3a90b-417f-4385-ae9f-245870e4abb4",
+          "true"
+        );
+      });
+  }
+</script>
+
+<style>
+  .card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    max-width: 400px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    margin: 16px auto;
+  }
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  .dismissButton {
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  .postButton {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+</style>

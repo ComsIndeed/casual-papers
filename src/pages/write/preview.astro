@@ -1,0 +1,131 @@
+---
+import PreviewLayout from "../../layouts/PreviewLayout.astro";
+---
+
+<PreviewLayout>
+  <header class="header" id="header">
+    <img id="header-image" class="header-image" />
+    <h1 class="header-title" id="header-title"></h1>
+    <p class="header-author" id="header-author"></p>
+    <p class="header-date" id="header-date"></p>
+    <div class="header-tags" id="header-tags"></div>
+  </header>
+  <article class="article" id="article"></article>
+</PreviewLayout>
+
+<blockquote>TODO: Support markdown for preview</blockquote>
+
+<script>
+  import { Content } from "../../classes/Content";
+
+  const contentJson = sessionStorage.getItem("previewContent");
+  if (!contentJson) {
+    alert(
+      "No content found in session storage. Please write your paper first."
+    );
+    window.location.href = "/write"; // Redirect to write page
+  } else {
+    const content = Content.fromJson(contentJson);
+
+    // Populate header
+    document.getElementById("header-title")!.textContent = content.head;
+    document.getElementById("header-author")!.textContent =
+      `Author: ${content.metadata.author}`;
+    document.getElementById("header-date")!.textContent =
+      `Published: ${new Date(content.metadata.createdAt).toLocaleDateString()}`;
+
+    const tagsContainer = document.getElementById("header-tags")!;
+    content.metadata.tags.forEach((tag) => {
+      const tagElement = document.createElement("span");
+      tagElement.className = "tag";
+      tagElement.textContent = tag;
+      tagsContainer.appendChild(tagElement);
+    });
+
+    // Populate image
+    const headerImage = document.getElementById("header-image");
+    if (content.imageUrl) {
+      headerImage?.setAttribute("src", content.imageUrl);
+      headerImage?.setAttribute("alt", content.head);
+    } else {
+      headerImage?.setAttribute("style", "display: none;");
+    }
+
+    // Populate article
+    document.getElementById("article")!.innerHTML = content.body;
+  }
+</script>
+
+<style lang="scss">
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+  }
+  .header {
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+    margin-left: 2em;
+
+    .header-image {
+      height: 16rem;
+      object-fit: cover;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 1.5rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .header-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+    }
+
+    .header-author {
+      color: #4b5563;
+      margin-bottom: 0.25rem;
+    }
+
+    .header-date {
+      color: #4b5563;
+      font-size: 0.875rem;
+    }
+
+    .header-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+
+      .tag {
+        background-color: #bfdbfe;
+        color: #1e40af;
+        font-size: 0.75rem;
+        font-weight: 500;
+        padding: 0.25rem 0.625rem;
+        border-radius: 9999px;
+      }
+    }
+  }
+
+  .article {
+    font-family: Georgia, serif;
+    font-size: 1rem;
+    color: #374151;
+    line-height: 1.75;
+    max-width: 48rem;
+    margin-left: 2em;
+  }
+
+  @media (max-width: 767px) {
+    .header {
+      margin-left: 0em;
+    }
+    .article {
+      margin-left: 0em;
+    }
+  }
+</style>

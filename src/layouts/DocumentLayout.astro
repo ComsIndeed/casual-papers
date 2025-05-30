@@ -20,8 +20,16 @@ const { content, backHref = "/" } = Astro.props; // Default back to homepage
   ogType="article"
   author={content.metadata.author}
 >
-  <AppBar title={content.head} showSearchBar={false} backHref={backHref} />
-  <main class="container mx-auto px-4 py-8">
+  <AppBar title="Casual Papers" />
+  <main class="container document-layout">
     <slot />
   </main>
 </BaseLayout>
+
+<style>
+  .document-layout {
+    max-width: 100vw;
+    width: 100vw;
+    overflow-x: hidden;
+  }
+</style>

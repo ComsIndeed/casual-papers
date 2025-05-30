@@ -12,9 +12,12 @@ import "../styles/global.scss";
         <p id="userEmail">Email:</p>
         <p id="userName">Name:</p>
       </div>
-      <button id="signOutButton" class="btn" style="color: red;"
-        >Sign out</button
-      >
+      <button id="adminButton" class="btn btn--primary" style="display:none;">
+        Go to Admin Panel
+      </button>
+      <button id="signOutButton" class="btn" style="color: red;">
+        Sign out
+      </button>
     </div>
 
     <div class="signin-card" id="authCard">
@@ -136,6 +139,7 @@ import "../styles/global.scss";
   onAuthStateChanged(auth, async (user) => {
     const authCard = document.getElementById("authCard");
     const userInfoCard = document.getElementById("userInfoCard");
+    const adminButton = document.getElementById("adminButton");
 
     if (user) {
       const userEmail = user.email;
@@ -147,6 +151,10 @@ import "../styles/global.scss";
         const tokenResult = await user.getIdTokenResult();
         if (tokenResult.claims && tokenResult.claims.admin) {
           adminText = " [ADMIN]";
+          adminButton!.style.display = "block";
+          adminButton!.addEventListener("click", () => {
+            window.location.href = "/admin";
+          });
         }
       }
 
@@ -176,6 +184,7 @@ import "../styles/global.scss";
     } else {
       authCard!.style.display = "block";
       userInfoCard!.style.display = "none";
+      adminButton!.style.display = "none";
     }
   });
 
@@ -219,6 +228,12 @@ import "../styles/global.scss";
     justify-content: center;
     gap: 1.75rem;
 
+    #userPhoto {
+      align-self: center;
+      justify-self: center;
+      margin: 2em 0em;
+    }
+
     &:hover {
       transform: translateY(-4px);
       box-shadow:
@@ -241,6 +256,7 @@ import "../styles/global.scss";
     font-weight: 800;
     margin-bottom: 0;
     color: var(--text-color);
+    margin-top: 0em;
   }
 
   .signin-form {

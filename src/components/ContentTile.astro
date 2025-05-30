@@ -1,48 +1,110 @@
 ---
 import { Content } from "../classes/Content";
+import { createSlug } from "../lib/utils/createSlug";
 
 interface Props {
   content: Content;
 }
 
 const { content }: { content: Content } = Astro.props;
+
+// For the "Read More" arrow, we'll use a simple SVG or a character
+const arrowRightIcon = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right">
+    <path d="M5 12h14"/>
+    <path d="m12 5 7 7-7 7"/>
+  </svg>
+`;
 ---
 
 <a
   class="ContentTile"
-  href={`/document/${content.head.replace(/\s+/g, "-").toLowerCase()}_${content.id}`}
+  href={`/document/${createSlug(content.head)}/${content.id}`}
 >
-  <!-- <img src={content.imageUrl} alt={content.head} /> -->
   <div class="details">
     <h2>{content.head}</h2>
-    <p>{content.body}</p>
+    <p>{content.body.slice(0, 64)}...</p>
   </div>
+  <span class="read-more-arrow" aria-hidden="true">
+    <Fragment set:html={arrowRightIcon} />
+  </span>
 </a>
 
 <style lang="scss">
+  :root {
+    --primary-color: #3f51b5;
+    --accent-color: #0ea5e9;
+    --border-color: #e0e0e0;
+    --card-background: #fff;
+  }
+
   .ContentTile {
     display: flex;
     flex-direction: row;
     align-items: center;
-    border-bottom: 1px solid rgb(198, 198, 198);
+    justify-content: space-between; /* Distribute items and push arrow to end */
+    padding: 1rem 0.5rem; /* More vertical padding, slight horizontal padding */
+    border-bottom: 1px solid var(--border-color); /* Using global border color */
+    transition:
+      background-color 0.2s ease-in-out,
+      transform 0.1s ease-out; /* Added transitions */
+    color: inherit; /* Ensure link color doesn't override text within tile */
+  }
 
-    img {
-    }
+  .ContentTile:hover {
+    background-color: #f0f0f0; /* Light background on hover */
+    transform: translateX(5px); /* Slight shift to the right on hover */
+  }
 
-    .details {
-      display: flex;
-      flex-direction: column;
+  .ContentTile:last-child {
+    border-bottom: none; /* No border for the last item */
+  }
 
-      h2 {
-        font-size: 1.125rem;
-        margin: 0;
-        padding: 0;
-      }
+  .ContentTile .tile-image {
+    width: 80px; /* Fixed width for consistent image size */
+    height: 80px; /* Fixed height */
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 1rem; /* Space between image and text */
+    flex-shrink: 0; /* Prevent image from shrinking */
+  }
 
-      p {
-        margin: 0;
-        font-size: 1rem;
-      }
-    }
+  .ContentTile .details {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Allow details to take up available space */
+    margin-right: 1rem; /* Space between details and arrow */
+  }
+
+  .ContentTile .details h2 {
+    font-family: "Lora", serif; /* Using Lora for titles */
+    font-size: 1.2rem; /* Slightly larger title */
+    margin: 0 0 0.4em 0; /* Adjusted margins */
+    color: var(--primary-color);
+  }
+
+  .ContentTile .details p {
+    margin: 0;
+    font-size: 0.9rem; /* Slightly smaller description */
+    color: #666; /* Softer grey for description */
+    display: -webkit-box; /* For multi-line ellipsis */
+    -webkit-line-clamp: 2; /* Limit to 2 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .read-more-arrow {
+    color: var(--accent-color); /* Color the arrow with accent color */
+    flex-shrink: 0; /* Prevent arrow from shrinking */
+    opacity: 0.7;
+    transition:
+      opacity 0.2s ease-in-out,
+      transform 0.2s ease-in-out;
+  }
+
+  .ContentTile:hover .read-more-arrow {
+    opacity: 1;
+    transform: translateX(3px); /* Small movement for the arrow on hover */
   }
 </style>
